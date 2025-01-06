@@ -1,0 +1,159 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class BankAccount {
+    private String accountHolderName;
+    private double accountBalance;
+
+    // Constructor
+    public BankAccount(String accountHolderName, double initialBalance) {
+        this.accountHolderName = accountHolderName;
+        this.accountBalance = initialBalance > 0 ? initialBalance : 0;
+    }
+
+    // Check balance
+    public double checkBalance() {
+        return accountBalance;
+    }
+
+    // Deposit funds
+    public void depositFunds(double amount) {
+        if (amount > 0) {
+            accountBalance += amount;
+            System.out.println("Deposit successful: " + amount);
+        } else {
+            System.out.println("Invalid deposit amount. Please try again.");
+        }
+    }
+
+    // Withdraw funds
+    public void withdrawFunds(double amount) {
+        if (amount > 0 && amount <= accountBalance) {
+            accountBalance -= amount;
+            System.out.println("Withdrawal successful: " + amount);
+        } else if (amount > accountBalance) {
+            System.out.println("Insufficient funds. Withdrawal failed.");
+        } else {
+            System.out.println("Invalid withdrawal amount. Please try again.");
+        }
+    }
+
+    // Transfer funds to another account
+    public void transferFunds(BankAccount recipient, double amount) {
+        if (amount > 0 && amount <= accountBalance) {
+            this.withdrawFunds(amount);
+            recipient.depositFunds(amount);
+            System.out.println("Transfer successful: " + amount + " to " + recipient.getAccountHolderName());
+        } else if (amount > accountBalance) {
+            System.out.println("Insufficient funds. Transfer failed.");
+        } else {
+            System.out.println("Invalid transfer amount. Please try again.");
+        }
+    }
+
+    // Get account holder's name
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+}
+
+public class Bankmanagement {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Create a list of accounts for dynamic account handling
+        ArrayList<BankAccount> accounts = new ArrayList<>();
+        accounts.add(new BankAccount("Shivani", 5800));
+        accounts.add(new BankAccount("Manivannan", 30000));
+
+        boolean appRunning = true;
+
+        while (appRunning) {
+            System.out.println("\n--- Welcome to the Banking System ---");
+            System.out.println("1. Check Account Balance");
+            System.out.println("2. Deposit Money");
+            System.out.println("3. Withdraw Money");
+            System.out.println("4. Transfer Money");
+            System.out.println("5. Add New Account");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Select an account to check balance:");
+                    for (int i = 0; i < accounts.size(); i++) {
+                        System.out.println((i + 1) + ". " + accounts.get(i).getAccountHolderName());
+                    }
+                    int accountIndex = scanner.nextInt() - 1;
+                    if (accountIndex >= 0 && accountIndex < accounts.size()) {
+                        System.out.println("Account Holder: " + accounts.get(accountIndex).getAccountHolderName());
+                        System.out.println("Balance: " + accounts.get(accountIndex).checkBalance());
+                    } else {
+                        System.out.println("Invalid selection.");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter account index to deposit money: ");
+                    accountIndex = scanner.nextInt() - 1;
+                    if (accountIndex >= 0 && accountIndex < accounts.size()) {
+                        System.out.print("Enter deposit amount: ");
+                        double depositAmount = scanner.nextDouble();
+                        accounts.get(accountIndex).depositFunds(depositAmount);
+                    } else {
+                        System.out.println("Invalid account selection.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter account index to withdraw money: ");
+                    accountIndex = scanner.nextInt() - 1;
+                    if (accountIndex >= 0 && accountIndex < accounts.size()) {
+                        System.out.print("Enter withdrawal amount: ");
+                        double withdrawalAmount = scanner.nextDouble();
+                        accounts.get(accountIndex).withdrawFunds(withdrawalAmount);
+                    } else {
+                        System.out.println("Invalid account selection.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter sender account index: ");
+                    int senderIndex = scanner.nextInt() - 1;
+                    System.out.print("Enter recipient account index: ");
+                    int recipientIndex = scanner.nextInt() - 1;
+
+                    if (senderIndex >= 0 && senderIndex < accounts.size() && recipientIndex >= 0 && recipientIndex < accounts.size()) {
+                        System.out.print("Enter transfer amount: ");
+                        double transferAmount = scanner.nextDouble();
+                        accounts.get(senderIndex).transferFunds(accounts.get(recipientIndex), transferAmount);
+                    } else {
+                        System.out.println("Invalid account selection.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("Enter new account holder name: ");
+                    scanner.nextLine(); // Consume leftover newline
+                    String newAccountHolder = scanner.nextLine();
+                    System.out.print("Enter initial balance: ");
+                    double initialBalance = scanner.nextDouble();
+                    accounts.add(new BankAccount(newAccountHolder, initialBalance));
+                    System.out.println("New account created successfully.");
+                    break;
+
+                case 6:
+                    appRunning = false;
+                    System.out.println("Thank you for using the Banking System. Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
