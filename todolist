@@ -1,0 +1,125 @@
+
+import java.util.LinkedList;
+        import java.util.Scanner;
+
+public class TaskManager {
+    static class Task {
+        private String description;
+        private boolean completed;
+
+        public Task(String description) {
+            this.description = description;
+            this.completed = false;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public boolean isCompleted() {
+            return completed;
+        }
+
+        public void markAsCompleted() {
+            this.completed = true;
+        }
+
+        @Override
+        public String toString() {
+            return (completed ? "[Done] " : "[Pending] ") + description;
+        }
+    }
+
+    public static void main(String[] args) {
+        LinkedList<Task> taskList = new LinkedList<>();
+        Scanner input = new Scanner(System.in);
+        int selection;
+
+        while (true) {
+            System.out.println("\nTask Manager Menu:");
+            System.out.println("1. Add a new task");
+            System.out.println("2. Update an existing task");
+            System.out.println("3. Remove a task");
+            System.out.println("4. Mark task as completed");
+            System.out.println("5. Show all tasks");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option: ");
+
+            selection = input.nextInt();
+            input.nextLine(); // Consume newline character
+
+            switch (selection) {
+                case 1:
+                    System.out.print("Enter task description: ");
+                    String newTask = input.nextLine();
+                    taskList.add(new Task(newTask));
+                    System.out.println("Task added successfully.");
+                    break;
+
+                case 2:
+                    System.out.print("Enter task number to update: ");
+                    int updateIndex = input.nextInt() - 1;
+                    input.nextLine(); // Consume newline
+                    if (updateIndex >= 0 && updateIndex < taskList.size()) {
+                        System.out.print("Enter new description: ");
+                        String updatedDescription = input.nextLine();
+                        taskList.get(updateIndex).setDescription(updatedDescription);
+                        System.out.println("Task updated successfully.");
+                    } else {
+                        System.out.println("Invalid task number.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter task number to remove: ");
+                    int removeIndex = input.nextInt() - 1;
+                    if (removeIndex >= 0 && removeIndex < taskList.size()) {
+                        taskList.remove(removeIndex);
+                        System.out.println("Task removed successfully.");
+                    } else {
+                        System.out.println("Invalid task number.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter task number to mark as completed: ");
+                    int completeIndex = input.nextInt() - 1;
+                    if (completeIndex >= 0 && completeIndex < taskList.size()) {
+                        taskList.get(completeIndex).markAsCompleted();
+                        System.out.println("Task marked as completed.");
+                    } else {
+                        System.out.println("Invalid task number.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("\nPending Tasks:");
+                    for (int i = 0; i < taskList.size(); i++) {
+                        if (!taskList.get(i).isCompleted()) {
+                            System.out.println((i + 1) + ". " + taskList.get(i));
+                        }
+                    }
+
+                    System.out.println("\nCompleted Tasks:");
+                    for (int i = 0; i < taskList.size(); i++) {
+                        if (taskList.get(i).isCompleted()) {
+                            System.out.println((i + 1) + ". " + taskList.get(i));
+                        }
+                    }
+                    break;
+
+                case 6:
+                    System.out.println("Exiting Task Manager. Goodbye!");
+                    input.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+}
